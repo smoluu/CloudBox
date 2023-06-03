@@ -1,0 +1,22 @@
+body{
+  font-family: 'Courier New', Courier, monospace;
+  margin: 0;
+  background-color: rgb(62, 62, 62);
+}
+#root{
+  display: flex;
+  height: 100vh;
+  text-align: center;
+  vertical-align: middle;
+}
+.loginform {
+  margin: auto;
+  display: inline-block;
+  padding: 25px;
+  border-radius: 50px 10px;
+  background-color: rgb(183, 183, 183);
+}
+.loginform input{
+  font-size: larger;
+  text-align: center;
+}
