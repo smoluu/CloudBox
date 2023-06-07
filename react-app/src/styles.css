@@ -15,8 +15,17 @@ body{
   padding: 25px;
   border-radius: 50px 10px;
   background-color: rgb(183, 183, 183);
-}
-.loginform input{
   font-size: larger;
   text-align: center;
+}
+.loginform button{
+  height: 40px;
+  width: 120px;
+  margin: 15px;
+}
+.loginform input{
+  text-align: center;
+  height: 25px;
+  width: 250px;
+  font-size: larger;
 }
