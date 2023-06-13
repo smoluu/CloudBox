@@ -8,18 +8,25 @@ config = {
     "database": "cloudbox"
 }
 
-def CheckDBConnection():
-    con = mysql.connector.connect(**config)
-    result = con.is_connected()
+def DatabaseStatus(): # returns true if database is online
+    try:
+        con = mysql.connector.connect(**config)
+    except:
+        return False
     con.close()
-    return result
+    return True
+
+
 def CheckForCredentials(username,password):
     con = mysql.connector.connect(**config)
+    print("Searching credentials:",username,password)
 
     cursor = con.cursor(dictionary=True)
     query = "SELECT * FROM users WHERE username = %s AND password = %s"
     cursor.execute(query,(username,password))
-    res = cursor.fetchone()
+    result = cursor.fetchone()
+    if(result):
+        print("Credentials found for:",username)
     con.close()
-    return res
+    return result
 

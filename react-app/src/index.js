@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import Axios from "axios";
+import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import "./styles.css";
+import Login from "./login";
+import Axios from "axios";
 
+// npm start
 const root = ReactDOM.createRoot(document.getElementById("root"));
-let content;
 
 function App() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginStatus, setLoginStatus] = useState("");
-
+  
   const handleLogin = () => {
     Axios.post(
       "http://localhost:5000/api/login",
@@ -23,59 +25,52 @@ function App() {
           "Content-Type": "application/json",
         },
       }
-    ).then((response) => {
-      console.log(response);
-      if (response.data.auth) {
-        console.log("login succesful")
-        setLoginStatus(response.data.auth);
-      } 
-      else {
-        console.log("Login failed")
-        setLoginStatus("Wrong username/password");
-      }
-    }).catch(function(error) {
-      console.log(error);
-      alert(error);
-    });
-  };
+    )
+      .then((response) => {
+        console.log(response);
+
+        if (response.data.error) {
+          // check for server error
+          console.log(response.data.error);
+          alert(response.data.error);
+        }
+
+        if (response.data.auth) {
+          //  check for auth
+          console.log("login succesful");
+          setLoginStatus(response.data.auth);
+        } else {
+          console.log("Login failed");
+          setLoginStatus("Wrong username/password");
+        }
+      })
+      .catch(function (error) {
+        console.log(error.message);
+        alert(error.message);
+      });
+  }
 
   return (
-    <form className="loginform">
-      <h1>CloudBox</h1>
-      <label>
-        Username:
-        <br />
-        <input
-          name="username"
-          type="text"
-          maxLength={20}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          />
-      </label>
-      <br />
-      <label>
-        Password:
-        <br />
-        <input
-          name="password"
-          type="password"
-          maxLength={20}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+    <>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="login" element={<Login
+              handleLogin={handleLogin}
+              setUsername={setUsername}
+              setPassword={setPassword}
+              loginStatus={loginStatus}
+            />
+          }
         />
-      </label>
-      <br />
-      <button type="button" onClick={handleLogin}>
-        Login
-      </button>
-      <p>{loginStatus}</p>
-    </form>
+      </Routes>
+    </>
   );
 }
-if (true) {
-  content = <App />;
-} else {
-}
 
-root.render(content);
+root.render(
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>
+);
