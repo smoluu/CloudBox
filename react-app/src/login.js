@@ -1,6 +1,51 @@
-import React from "react";
+import React, {useState} from "react";
+import Axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ handleLogin, setUsername, setPassword, loginStatus }) => {
+
+const Login = ({ loginStatus,setLoginStatus }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    Axios.post(
+      "http://localhost:5000/api/login",
+      {
+        username: username,
+        password: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        console.log(response);
+
+        if (response.data.error) {
+          // check for server error
+          console.log(response.data.error);
+          alert(response.data.error);
+        }
+
+        if (response.data.token) {
+          //  check for auth
+          console.log("login succesful");
+          setLoginStatus(true);
+          localStorage.setItem("token", response.data.token)
+          navigate("/home")
+        } else {
+          console.log("Login failed");
+          setLoginStatus(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error.message);
+        alert(error.message);
+      });
+  }
   return (
     <>
       <form className="loginform">
@@ -32,7 +77,6 @@ const Login = ({ handleLogin, setUsername, setPassword, loginStatus }) => {
         <button type="button" onClick={handleLogin}>
           Login
         </button>
-        <p>{String(loginStatus)}</p>
       </form>
     </>
   );

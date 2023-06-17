@@ -1,0 +1,7 @@
+2023-06-15 23:40:03.610 | DEBUG    | server:index:17 - b'{\r\n  "username": "test",\r\n  "password": "test"\r\n}'
+2023-06-15 23:41:35.892 | DEBUG    | server:index:17 - b'{\r\n  "username": "test",\r\n  "password": "test"\r\n}'
+2023-06-15 23:41:46.605 | DEBUG    | server:index:17 - b'{\r\n  "username": "test",\r\n  "password": "test"\r\n}'
+2023-06-15 23:50:41.058 | INFO     | server:index:18 - b'{\r\n  "username": "test",\r\n  "password": "test"\r\n}'
+2023-06-15 23:50:53.520 | INFO     | server:index:18 - b'{\r\n  "username": "test",\r\n  "password": "test"\r\n}'
+2023-06-15 23:55:44.983 | INFO     | server:index:18 - b'{\r\n  "username": "test",\r\n  "password": "test"\r\n}'
+2023-06-16 00:03:29.079 | INFO     | server:index:34 - User -
