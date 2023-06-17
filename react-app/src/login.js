@@ -35,6 +35,7 @@ const Login = ({ loginStatus,setLoginStatus }) => {
           console.log("login succesful");
           setLoginStatus(true);
           localStorage.setItem("token", response.data.token)
+          localStorage.setItem("username", username)
           navigate("/home")
         } else {
           console.log("Login failed");
@@ -46,6 +47,26 @@ const Login = ({ loginStatus,setLoginStatus }) => {
         alert(error.message);
       });
   }
+  const handleRegister = () =>{
+    Axios.post(
+      "http://localhost:5000/api/register",
+      {
+        username: username,
+        password: password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => {
+        if(response.data.succesful === true){
+          alert("Succesfully registered!")
+        }
+      });
+  }
+
   return (
     <>
       <form className="loginform">
@@ -76,6 +97,9 @@ const Login = ({ loginStatus,setLoginStatus }) => {
         <br />
         <button type="button" onClick={handleLogin}>
           Login
+        </button>
+        <button type="button" onClick={handleRegister}>
+          Register
         </button>
       </form>
     </>

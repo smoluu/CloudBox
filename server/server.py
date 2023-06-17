@@ -2,7 +2,7 @@
 # run server:       flask --app server.py run
 # debug server:       flask --app server.py -- debug run
 from flask import Flask
-from flask import request,jsonify
+from flask import request
 from flask_cors import CORS
 from db import *
 import json
@@ -47,6 +47,23 @@ def Login():
         return json.dumps(response)
     else:
         return ("",400)
+    
+@app.route("/api/register", methods=["POST"])
+def Register():
+    username = request.json("username")
+    password = request.json("password")
+    response = {
+        "username": username,
+        "succesful": "",
+        "message": ""
+    }
+    
+    if CheckUsernameFree(username):
+        RegisterUser(username,password)
+    else:
+        response["succesful"] = False
+        response["message"] = "Username Taken"
+    return response
 """ TO DO 
 encrypt incoming credentials
 logger

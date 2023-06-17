@@ -39,7 +39,7 @@ def GenerateToken(id):
     query = "UPDATE users SET token = %s WHERE id = %s"
     cursor.execute(query,(token,id))
     con.close()
-    print("Generated token for user ID:",id)
+    print("Generated token for ID:",id)
     return token
 
 def CheckToken(token):
@@ -49,5 +49,28 @@ def CheckToken(token):
     cursor.execute(query,(token,))
     result = cursor.fetchone()
     con.close()
-    print("Checked token :",token ,result)
+    print("Checked token :",token)
     return result
+
+
+def CheckUsernameFree(username):
+    con = mysql.connector.connect(**config)
+    cursor = con.cursor(dictionary=True)
+    query = ################################### add
+    cursor.execute(query,(username,))
+    result = cursor.fetchone()
+    con.close()
+    if result:
+        return False
+    return True
+
+def RegisterUser(username,password):
+    con = mysql.connector.connect(**config)
+    cursor = con.cursor(dictionary=True)
+    query = "" ################################### add
+    cursor.execute(query,(username,password))
+    con.commit()
+    con.close()
+    print("Registered User:",username)
+
+    
