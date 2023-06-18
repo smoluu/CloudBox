@@ -1,7 +1,7 @@
 import React, { useState, StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
-import "./styles.css";
+import "./css/styles.css";
 import Login from "./login";
 import Home from "./home";
 

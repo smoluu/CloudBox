@@ -42,21 +42,21 @@ def GenerateToken(id):
     print("Generated token for ID:",id)
     return token
 
-def CheckToken(token):
+def CheckToken(username,token):
     con = mysql.connector.connect(**config)
     cursor = con.cursor(dictionary=True)
-    query = "SELECT * FROM users WHERE token = %s"
-    cursor.execute(query,(token,))
+    query = "SELECT * FROM users WHERE username = %s AND token = %s"
+    cursor.execute(query,(username,token))
     result = cursor.fetchone()
     con.close()
-    print("Checked token :",token)
+    print("Checked token for user :",username)
     return result
 
 
-def CheckUsernameFree(username):
+def isUsernameFree(username):
     con = mysql.connector.connect(**config)
     cursor = con.cursor(dictionary=True)
-    query = ################################### add
+    query = "SELECT * FROM users WHERE username = %s"
     cursor.execute(query,(username,))
     result = cursor.fetchone()
     con.close()
@@ -67,10 +67,18 @@ def CheckUsernameFree(username):
 def RegisterUser(username,password):
     con = mysql.connector.connect(**config)
     cursor = con.cursor(dictionary=True)
-    query = "" ################################### add
+    query = "INSERT INTO users ( id , username, password ) VALUES ( NULL, %s, %s )"
     cursor.execute(query,(username,password))
     con.commit()
     con.close()
-    print("Registered User:",username)
+    print("Registered user:",username)
 
-    
+def RevokeToken(username,token):
+    con = mysql.connector.connect(**config)
+    cursor = con.cursor()
+    query = "UPDATE users SET token = %s WHERE token = %s AND username = %s"
+    cursor.execute(query,("",token,username))
+    con.commit()
+    con.close()
+    print("removed token for user:",username)
+    return True

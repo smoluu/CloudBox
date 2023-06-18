@@ -1,19 +1,20 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
-const Login = ({ loginStatus,setLoginStatus }) => {
+const Login = ({ loginStatus, setLoginStatus }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
+    return await 
     Axios.post(
       "http://localhost:5000/api/login",
       {
-        username: username,
-        password: password,
+          username: username,
+          password: password,
+        
       },
       {
         headers: {
@@ -34,11 +35,12 @@ const Login = ({ loginStatus,setLoginStatus }) => {
           //  check for auth
           console.log("login succesful");
           setLoginStatus(true);
-          localStorage.setItem("token", response.data.token)
-          localStorage.setItem("username", username)
-          navigate("/home")
+          localStorage.setItem("token", response.data.token);
+          localStorage.setItem("username", username);
+          navigate("/home");
         } else {
           console.log("Login failed");
+          alert("Wrong username/password")
           setLoginStatus(false);
         }
       })
@@ -46,8 +48,14 @@ const Login = ({ loginStatus,setLoginStatus }) => {
         console.log(error.message);
         alert(error.message);
       });
-  }
-  const handleRegister = () =>{
+  };
+
+  async function handleRegister () {
+    if (password.length <= 5) {
+      alert("password too short");
+      return;
+    }
+    return await
     Axios.post(
       "http://localhost:5000/api/register",
       {
@@ -55,17 +63,22 @@ const Login = ({ loginStatus,setLoginStatus }) => {
         password: password,
       },
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       }
     )
       .then((response) => {
-        if(response.data.succesful === true){
-          alert("Succesfully registered!")
+        if (response.data.error) {
+          alert(response.data.error);
         }
+        if (response.data) {
+          alert(response.data.message);
+        }
+      })
+      .catch(function (error) {
+        alert(error.message);
       });
-  }
+    }
+
 
   return (
     <>
