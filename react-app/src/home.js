@@ -3,10 +3,13 @@ import "./css/home.css"
 import { handleLogout } from "./requests"
 import { useNavigate} from "react-router-dom";
 import Axios from "axios";
+import Login from "./login";
+import Upload from "./upload";
 
 
 const Home = ({ loginStatus, setLoginStatus }) => {
   const navigate = useNavigate();
+  const [showUpload,setShowUpload] = useState(true)
   const [isloading, setloading] = useState(true);
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
@@ -41,18 +44,26 @@ const Home = ({ loginStatus, setLoginStatus }) => {
     console.log(auth,2)
     if(isloading){
       return (
-      <div>LOADING</div> 
+      <div>LOADING</div>
+
       )
     }
-    return(
+    return (
       <>
-      <div>
-        <p>welcome home {username}</p>
-        <button onClick={() => {
-          handleLogout(username,token); navigate("/login")
-          }}>LOGOUT</button>
-      </div>
+        <div>
+          <p>welcome home {username}</p>
+          <button
+            onClick={() => {
+              handleLogout(username, token);
+              navigate("/login");
+            }}
+          >
+            LOGOUT
+          </button>
+          <button onClick={() => setShowUpload(!showUpload)}>Upload</button>
+          {showUpload ? <Upload setShowUpload={setShowUpload} /> : null}
+        </div>
       </>
-    )
+    );
 };
 export default Home;
