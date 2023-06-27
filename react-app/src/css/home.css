@@ -4,10 +4,6 @@ body{
   margin: 0;
   background-color: rgb(62, 62, 62);
 }
-button{
-  width: 100px;
-  height: 100px;
-}
 .upload-component{
   background-color:  gray;
   position: absolute;
@@ -21,9 +17,7 @@ button{
   display: inline-block;
   
 }
-#uploadButton{
-  height: 25px;
-}
+
 #remove-file-button{
   height: fit-content;
   width: fit-content;
@@ -54,3 +48,15 @@ ol {
   padding-left: 50px;
 }
 
+/* buttons */
+.custom-button{
+    margin: 10px;
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+.custom-button:hover{
+  border: 1px solid #000000;
+  background-color: #5c5c5c;
+}
