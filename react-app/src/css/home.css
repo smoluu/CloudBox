@@ -52,11 +52,13 @@ ol {
 .custom-button{
     margin: 10px;
     border: 1px solid #ccc;
+    background-color: #969696;
     display: inline-block;
     padding: 6px 12px;
     cursor: pointer;
 }
-.custom-button:hover{
+
+.custom-button:hover, .custom-button:active{
   border: 1px solid #000000;
   background-color: #5c5c5c;
 }

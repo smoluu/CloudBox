@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { handleLogout,handleUpload } from "./requests";
+import {handleUpload,CheckAuth } from "./requests";
 
 var fileArray = [];
 var results = [];
@@ -10,7 +10,6 @@ const Upload = ({ setShowUpload }) => {
   const onFileChange = (e) => {
     if (e.target.files){
       fileArray = [];
-      console.log("e.target.files",e.target.files);
       fileArray = Array.from(e.target.files)
       for (var i = 0; i < fileArray.length; i++) {
         results.push(
@@ -20,6 +19,7 @@ const Upload = ({ setShowUpload }) => {
             <button
               onClick={(e) => removeFile(e.target.parentElement.id)}
               id="remove-file-button"
+              className="custom-button"
             >
               X
             </button>
@@ -43,8 +43,6 @@ const Upload = ({ setShowUpload }) => {
     fileArray.splice(index,1);
     results.splice(index,1);
     setFilesElement(<div>{results}</div>);
-    console.log(fileArray)
-    console.log(id)
   }
 
   function bytesToSize(bytes) {
@@ -56,7 +54,10 @@ const Upload = ({ setShowUpload }) => {
   }
   
   const handleUploadButton = () =>{
-    handleUpload("http://localhost:5000/api/upload", fileArray);
+    const auth = CheckAuth();
+    if(fileArray.length > 0 && auth){
+      handleUpload("http://localhost:5000/api/upload", fileArray);
+    }
   }
   return (
     <>
@@ -77,8 +78,8 @@ const Upload = ({ setShowUpload }) => {
           <button
             id="uploadButton"
             onClick={handleUploadButton}
-            style={{ display: "none" }}
-          ></button>
+            style={{ display: "none"}}
+            ></button>
 
           <label className="custom-button" htmlFor="uploadButton">
             Upload files

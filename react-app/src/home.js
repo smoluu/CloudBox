@@ -1,69 +1,37 @@
 import React, { useState } from "react";
 import "./css/home.css"
-import { handleLogout } from "./requests"
+import { handleLogout,CheckAuth } from "./requests"
 import { useNavigate} from "react-router-dom";
-import Axios from "axios";
-import Login from "./login";
 import Upload from "./upload";
 
 
-const Home = ({ loginStatus, setLoginStatus }) => {
+const Home = () => {
   const navigate = useNavigate();
   const [showUpload,setShowUpload] = useState(true)
-  const [isloading, setloading] = useState(true);
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
-  let auth;
-  const CheckAuth = async () => {
-    await Axios.post(
-      "http://localhost:5000/api/login",
-      {
-        username: username
-      },
-      {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      }
-      ).then((response) => {
-        if (response.data.auth === true) {
-          console.log(response.data.auth,1);
-          setloading(false);
-        } else {
-          navigate("/login");
-          return false;
-        }
-      });
-    };
-    if(token === null || username === null){
-      window.location.replace("/login");
-    }
-    
-    CheckAuth()
-    console.log(auth,2)
-    if(isloading){
-      return (
-      <div>LOADING</div>
+  const auth = CheckAuth(username,token);
 
-      )
-    }
-    return (
-      <>
-        <div>
-          <p>welcome home {username}</p>
-          <button
-            onClick={() => {
-              handleLogout(username, token);
-              navigate("/login");
-            }}
-          >
-            LOGOUT
-          </button>
-          <button onClick={() => setShowUpload(!showUpload)}>Upload</button>
-          {showUpload ? <Upload setShowUpload={setShowUpload} /> : null}
-        </div>
-      </>
-    );
+
+  if(token === null || username === null || !auth){
+    window.location.replace("/login");
+  }
+  return (
+    <>
+      <div>
+        <p>welcome home {username}</p>
+        <button
+          onClick={() => {
+            handleLogout(username, token);
+            navigate("/login");
+          }}
+        >
+          LOGOUT
+        </button>
+        <button onClick={() => setShowUpload(!showUpload)}>Upload</button>
+        {showUpload ? <Upload setShowUpload={setShowUpload} /> : null}
+      </div>
+    </>
+  );
 };
 export default Home;
