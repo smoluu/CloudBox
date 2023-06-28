@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from "react";
+import { handleLogout,handleUpload } from "./requests";
 
 var fileArray = [];
+var results = [];
 
 const Upload = ({ setShowUpload }) => {
   const [filesElement, setFilesElement] = useState([]);
 
   const onFileChange = (e) => {
     if (e.target.files){
+      fileArray = [];
       console.log("e.target.files",e.target.files);
       fileArray = Array.from(e.target.files)
-      const results = [];
-      fileArray.forEach((file,index) => {
+      for (var i = 0; i < fileArray.length; i++) {
         results.push(
-          <li key={index} id={"li"+index}>
-            <strong>{file.name}</strong>
-            <p id="sizeP">{bytesToSize(file.size)}</p>
-            <button onClick={(e) => removeFile(e.target.parentElement.id)} id="remove-file-button">X</button>
-            
+          <li key={i} id={"li" + i}>
+            <strong>{fileArray[i].name}</strong>
+            <p id="sizeP">{bytesToSize(fileArray[i].size)}</p>
+            <button
+              onClick={(e) => removeFile(e.target.parentElement.id)}
+              id="remove-file-button"
+            >
+              X
+            </button>
           </li>
-        )
-      });
-      document.getElementById("uploadButton").disabled = false;
+        );
+      };
       setFilesElement(
         <div>
         {results}
@@ -30,19 +35,16 @@ const Upload = ({ setShowUpload }) => {
 
   useEffect(() => {
     console.log("FILE ARRAY",fileArray);
+    console.log("FILE Element", filesElement);
   });
 
-  const handleUpload = () => {
-
-  };
   const removeFile = (id) => {
     const index = id.replace("li","")
-    //set file array state
     fileArray.splice(index,1);
+    results.splice(index,1);
+    setFilesElement(<div>{results}</div>);
     console.log(fileArray)
     console.log(id)
-    //delete elements
-    document.getElementById(id).remove();
   }
 
   function bytesToSize(bytes) {
@@ -53,7 +55,9 @@ const Upload = ({ setShowUpload }) => {
     return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
   }
   
-
+  const handleUploadButton = () =>{
+    handleUpload("http://localhost:5000/api/upload", fileArray);
+  }
   return (
     <>
       <div className="upload-component">
@@ -64,20 +68,19 @@ const Upload = ({ setShowUpload }) => {
             id="fileInputButton"
             type="file"
             onChange={onFileChange}
-            multiple="true"
+            multiple={true}
             style={{ display: "none" }}
           ></input>
-          <label className="custom-button" for="fileInputButton">
+          <label className="custom-button" htmlFor="fileInputButton">
             Select files
           </label>
           <button
             id="uploadButton"
-            disabled="false"
-            onClick={handleUpload}
+            onClick={handleUploadButton}
             style={{ display: "none" }}
           ></button>
 
-          <label className="custom-button" for="uploadButton">
+          <label className="custom-button" htmlFor="uploadButton">
             Upload files
           </label>
         </div>

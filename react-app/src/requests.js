@@ -23,5 +23,23 @@ const handleLogout = (username, token) => {
     });
 }
 
+  const handleUpload = (url,fileArray) => {
+    if (fileArray) {
+      var formData = new FormData();
+      for (var i = 0; i < fileArray.length; i++) {
+        formData.append(fileArray[i].name, fileArray[i]);
+      }
+      console.log(formData)
+      Axios.post(url,{
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(response => { console.log({response})})
+      .catch(error => {console.log({error})}
+      );
+    }
+  };
 
-export { handleLogout };
+export { handleLogout, handleUpload };
