@@ -10,7 +10,7 @@ const Login = ({ loginStatus, setLoginStatus }) => {
   const handleLogin = async () => {
     return await 
     Axios.post(
-      "http://localhost:5000/api/login",
+      "http://localhost/api/login",
       {
           username: username,
           password: password,

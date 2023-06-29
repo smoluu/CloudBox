@@ -1,17 +1,23 @@
 #activate .venv:    .\.venv\scripts\activate
 # run server:       flask --app server.py run
 # debug server:       flask --app server.py -- debug run
+import os
 from flask import Flask
 from flask import request
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 from db import *
 import json
 from loguru import logger
+from werkzeug.utils import secure_filename
 
 logger.add("serverlog.log")
+UPLOAD_FOLDER = '/users'
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+app.debug = True
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
+
 @app.route("/api/login", methods=["POST"])
 def Login():
     if "Authorization" in request.headers:
@@ -46,7 +52,7 @@ def Login():
     else:
         return ("",400)
     
-@app.route("/api/register", methods=["POST"])
+@app.route("/api/register", methods=["POST,GET"])
 def Register():
     if DatabaseStatus() == False:
         return {"error": "database offline - 500"}
@@ -83,12 +89,20 @@ def Logout():
             response["message"] = "succesfully logged out"
         return response
 
-    return ("",200)
-""" TO DO 
-encrypt incoming credentials
-logger
-"""
+    return ("ok",200)
 
+@app.route("/api/upload", methods=["POST"])
+@cross_origin()
+def Upload():
+    if request:
+        #uploaded_files = request.form["file"]
+        #print(request.get_data())
+        files = request.form.getlist("fileArray")
+        print(files)
+        for file in files:
+            fn = secure_filename(file)
+            #file.save(os.path.join(UPLOAD_FOLDER, fn))
+    return ("",200)
 
 
 def GetFiles(username,token):

@@ -3,12 +3,14 @@ import {handleUpload,CheckAuth } from "./requests";
 
 var fileArray = [];
 var results = [];
+var files;
 
 const Upload = ({ setShowUpload }) => {
   const [filesElement, setFilesElement] = useState([]);
 
   const onFileChange = (e) => {
     if (e.target.files){
+      files = e.target.files
       fileArray = [];
       fileArray = Array.from(e.target.files)
       for (var i = 0; i < fileArray.length; i++) {
@@ -53,10 +55,10 @@ const Upload = ({ setShowUpload }) => {
     return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
   }
   
-  const handleUploadButton = () =>{
+  const handleUploadButton = async() =>{
     const auth = CheckAuth();
     if(fileArray.length > 0 && auth){
-      handleUpload("http://localhost:5000/api/upload", fileArray);
+      await handleUpload("http://localhost:5000/api/upload", fileArray, files);
     }
   }
   return (
@@ -78,8 +80,8 @@ const Upload = ({ setShowUpload }) => {
           <button
             id="uploadButton"
             onClick={handleUploadButton}
-            style={{ display: "none"}}
-            ></button>
+            style={{ display: "none" }}
+          ></button>
 
           <label className="custom-button" htmlFor="uploadButton">
             Upload files

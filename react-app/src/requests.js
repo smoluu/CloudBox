@@ -23,21 +23,25 @@ const handleLogout = (username, token) => {
     });
 }
 
-  const handleUpload = (url,fileArray) => {  //add checkauth
+  const handleUpload = (url, fileArray, files) => {
     var formData = new FormData();
-    for (var i = 0; i < fileArray.length; i++) {
-      formData.append(fileArray[i].name, fileArray[i]);
-    }
-    console.log(formData)
-    Axios.post(url,{
-      data: formData,
+    console.log("HMM???",fileArray)
+    console.log("HMM???",files)
+    formData.append("fileArray", fileArray);
+    
+    console.log("FORMDATA BEFORE SENDING",formData)
+
+    Axios.post("http://localhost:5000/api/upload",formData,{
       headers: {
         "Content-Type": "multipart/form-data",
       },
     })
-    .then(response => { console.log({response})})
-    .catch(error => {console.log({error})}
-    );
+      .then((response) => {
+        console.log({ response });
+      })
+      .catch((error) => {
+        console.log({ error });
+      });
   };
 
   const CheckAuth = async () => {
