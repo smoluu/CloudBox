@@ -42,14 +42,14 @@ def GenerateToken(id):
     print("Generated token for ID:",id)
     return token
 
-def CheckToken(username,token):
+def CheckToken(token):
     con = mysql.connector.connect(**config)
     cursor = con.cursor(dictionary=True)
-    query = "SELECT * FROM users WHERE username = %s AND token = %s"
-    cursor.execute(query,(username,token))
+    query = "SELECT * FROM users WHERE token = %s"
+    cursor.execute(query,(token,))
     result = cursor.fetchone()
     con.close()
-    print("Checked token for user :",username)
+    print("Checked token",token)
     return result
 
 
@@ -82,3 +82,4 @@ def RevokeToken(username,token):
     con.close()
     print("removed token for user:",username)
     return True
+

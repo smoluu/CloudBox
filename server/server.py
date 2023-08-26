@@ -1,33 +1,36 @@
 #activate .venv:    .\.venv\scripts\activate
 # run server:       flask --app server.py run
-# debug server:       flask --app server.py -- debug run
+# debug server:       flask --app server.py --debug run
 import os
 from flask import Flask
 from flask import request
-from flask_cors import CORS,cross_origin
+from flask_cors import CORS, cross_origin
 from db import *
 import json
 from loguru import logger
 from werkzeug.utils import secure_filename
 
-logger.add("serverlog.log")
-UPLOAD_FOLDER = '/users'
 
 app = Flask(__name__)
 app.debug = True
+cors = CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "http//:localhost:3000", "allow_headers": "*", "expose_headers": "*"}})
+UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1000 * 1000 * 1000 # in gigabytes
+if not os.path.exists(app.config["UPLOAD_FOLDER"]):
+    os.makedirs(app.config["UPLOAD_FOLDER"]) #creates folder for uploads
 
 @app.route("/api/login", methods=["POST"])
+@cross_origin()
 def Login():
     if "Authorization" in request.headers:
         token = request.headers.get("Authorization")
-        username = request.json["username"]
-        if CheckToken(username,token):
+        if CheckToken(token):
             return {"auth": True}
         else:
             return {"auth": False}
-    elif request:
+        
+    if "Authorization" not in request.headers:
         #check for database connection
         if DatabaseStatus() == False:
             return {"error": "database offline - 500"}
@@ -46,13 +49,12 @@ def Login():
             token = result["token"]
             token = GenerateToken(id)
             response["token"] = token
-
-
+        
         return response
     else:
         return ("",400)
     
-@app.route("/api/register", methods=["POST,GET"])
+@app.route("/api/register", methods=["POST"])
 def Register():
     if DatabaseStatus() == False:
         return {"error": "database offline - 500"}
@@ -91,19 +93,47 @@ def Logout():
 
     return ("ok",200)
 
-@app.route("/api/upload", methods=["POST"])
+@app.route("/api/upload", methods=["POST","GET","OPTIONS"])
 @cross_origin()
 def Upload():
-    if request:
-        #uploaded_files = request.form["file"]
-        #print(request.get_data())
-        files = request.form.getlist("fileArray")
-        print(files)
-        for file in files:
-            fn = secure_filename(file)
-            #file.save(os.path.join(UPLOAD_FOLDER, fn))
-    return ("",200)
+    if request.method == "POST":
+        if "file" not in request.files:
+            return("no files",500)
+        if "Authorization" in request.headers:
+            token = request.headers.get("Authorization")
+            checkToken = CheckToken(token)
+            if checkToken is not None:
+                id = str(checkToken["id"])
+                fileList = request.files.getlist("file")
+                if not os.path.exists(os.path.join(app.config["UPLOAD_FOLDER"],id)):
+                    os.makedirs(os.path.join(app.config["UPLOAD_FOLDER"],id))
+                for file in fileList:
+                    fileName = secure_filename(file.filename)
+                    file.save(os.path.join(app.config["UPLOAD_FOLDER"],id, fileName))
+                    print(os.path.join(app.config["UPLOAD_FOLDER"],id, fileName))
+                return ("succesfull",200)
+            return ("no auth",200)
+        return ("no auth",200)
 
+@app.route("/api/files", methods=["POST"])
+@cross_origin()
+def Files():
+    if request.method == "POST":
+        if "Authorization" in request.headers:
+            token = request.headers.get("Authorization")
+            checkToken = CheckToken(token)
+            if checkToken is not None:
+                id = str(checkToken["id"])
+                if  os.path.exists(os.path.join(app.config["UPLOAD_FOLDER"],id)):
+                    fileNames = os.listdir(os.path.join(app.config["UPLOAD_FOLDER"],id))
+                    fileSizes = []
+                    with os.scandir(os.path.join(app.config["UPLOAD_FOLDER"],id)) as entries:
+                        for entry in entries:
+                            fileSizes.append(entry.stat().st_size)
+                    response = {}
+                    response["names"] = fileNames
+                    response["sizes"] = fileSizes
+                    
+                    return(response,200)
+        return ("",200)
 
-def GetFiles(username,token):
-    return

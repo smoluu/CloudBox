@@ -3,14 +3,12 @@ import {handleUpload,CheckAuth } from "./requests";
 
 var fileArray = [];
 var results = [];
-var files;
 
 const Upload = ({ setShowUpload }) => {
   const [filesElement, setFilesElement] = useState([]);
 
   const onFileChange = (e) => {
     if (e.target.files){
-      files = e.target.files
       fileArray = [];
       fileArray = Array.from(e.target.files)
       for (var i = 0; i < fileArray.length; i++) {
@@ -36,8 +34,6 @@ const Upload = ({ setShowUpload }) => {
   };
 
   useEffect(() => {
-    console.log("FILE ARRAY",fileArray);
-    console.log("FILE Element", filesElement);
   });
 
   const removeFile = (id) => {
@@ -54,23 +50,31 @@ const Upload = ({ setShowUpload }) => {
     if (i === 0) return bytes + " " + sizes[i];
     return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
   }
-  
-  const handleUploadButton = async() =>{
-    const auth = CheckAuth();
-    if(fileArray.length > 0 && auth){
-      await handleUpload("http://localhost:5000/api/upload", fileArray, files);
+
+  const handleUploadButton = () =>{
+    if(fileArray.length > 0){
+      if(CheckAuth()){
+        handleUpload("http://localhost:5000/api/upload", fileArray);
+        setFilesElement(<div>succesfully uploaded</div>);
+        fileArray = [];
+      }
     }
   }
   return (
     <>
       <div className="upload-component">
-        <h1>Select files to upload</h1>
-        <button onClick={() => setShowUpload(false)}>X</button>
+        <h1>Upload</h1>
+        <button onClick={() => setShowUpload(true)}>X</button>
         <div className="upload-component-info">
           <input
             id="fileInputButton"
             type="file"
             onChange={onFileChange}
+            onClick={ () => {
+              results = [];
+              fileArray = [];
+              setFilesElement(<div></div>);
+              }} // empty file array
             multiple={true}
             style={{ display: "none" }}
           ></input>
@@ -87,7 +91,7 @@ const Upload = ({ setShowUpload }) => {
             Upload files
           </label>
         </div>
-        <div className="files">
+        <div className="files" id="filesElement">
           <ol>{filesElement}</ol>
         </div>
       </div>

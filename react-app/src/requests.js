@@ -13,9 +13,8 @@ const handleLogout = (username, token) => {
   )
     .then((response) => {
       if (response.data.succesful) {
-        localStorage.removeItem("username")
-        localStorage.removeItem("token")
-
+        localStorage.removeItem("username");
+        localStorage.removeItem("token");
       }
     })
     .catch(function (error) {
@@ -23,18 +22,22 @@ const handleLogout = (username, token) => {
     });
 }
 
-  const handleUpload = (url, fileArray, files) => {
+  const handleUpload = (url,fileArray) => {
+    const username = localStorage.getItem("username");
+    const token = localStorage.getItem("token");
+    const FormData = require("form-data");
     var formData = new FormData();
-    console.log("HMM???",fileArray)
-    console.log("HMM???",files)
-    formData.append("fileArray", fileArray);
+    for (var i = 0; i < fileArray.length; i++) {
+      formData.append("file", fileArray[i], fileArray[i].name);
+    }
     
-    console.log("FORMDATA BEFORE SENDING",formData)
+    console.log("formData BEFORE SENDING", formData);
 
-    Axios.post("http://localhost:5000/api/upload",formData,{
+    Axios.post(url, formData,
+      {
       headers: {
-        "Content-Type": "multipart/form-data",
-      },
+        Authorization: token
+      }
     })
       .then((response) => {
         console.log({ response });
@@ -45,33 +48,50 @@ const handleLogout = (username, token) => {
   };
 
   const CheckAuth = async () => {
-    const username = localStorage.getItem("username");
     const token = localStorage.getItem("token");
-    if(username == null || token == null){
+    if(token == null){
       alert("no auth")
       return false
     }
 
-    await Axios.post(
-      "http://localhost:5000/api/login",
-      {
-        username: username,
+    await Axios.post("http://localhost:5000/api/login",null,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token,
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      }
-    ).then(response => {
-      if (response.data.auth === true) {
-        return true
-      } else {
-        return false;
-      }
-    }).catch(error => {console.log({error})});
+    })
+      .then((response) => {
+        if (response.data.auth === true) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch((error) => {
+        console.log({ error });
+      });
   };
 
+const RequestFiles = async  () => {
+  const token = localStorage.getItem("token");
+  await Axios.post(
+    "http://localhost:5000/api/files",null,
+    {
+      headers: { "Content-Type": "application/json",
+      Authorization: token
+      }
+    }
+  )
+    .then((response) => {
+      console.log(response.data)
+      return response.data
+    })
+    .catch(function (error) {
+      alert(error.message);
+    });
+};
 
 
-export { handleLogout, handleUpload, CheckAuth };
+
+export { handleLogout, handleUpload, CheckAuth, RequestFiles};

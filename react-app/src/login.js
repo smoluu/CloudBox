@@ -8,17 +8,16 @@ const Login = ({ loginStatus, setLoginStatus }) => {
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    return await 
-    Axios.post(
-      "http://localhost/api/login",
+    return await Axios.post(
+      "http://localhost:5000/api/login",
       {
-          username: username,
-          password: password,
-        
+        username: username,
+        password: password,
       },
       {
         headers: {
           "Content-Type": "application/json",
+
         },
       }
     )
@@ -40,7 +39,7 @@ const Login = ({ loginStatus, setLoginStatus }) => {
           navigate("/home");
         } else {
           console.log("Login failed");
-          alert("Wrong username/password")
+          alert("Wrong username/password");
           setLoginStatus(false);
         }
       })

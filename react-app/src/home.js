@@ -3,6 +3,7 @@ import "./css/home.css"
 import { handleLogout,CheckAuth } from "./requests"
 import { useNavigate} from "react-router-dom";
 import Upload from "./upload";
+import Files from "./files";
 
 
 const Home = () => {
@@ -10,7 +11,7 @@ const Home = () => {
   const [showUpload,setShowUpload] = useState(true)
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
-  const auth = CheckAuth(username,token);
+  const auth = CheckAuth();
 
 
   if(token === null || username === null || !auth){
@@ -29,7 +30,9 @@ const Home = () => {
           LOGOUT
         </button>
         <button onClick={() => setShowUpload(!showUpload)}>Upload</button>
-        {showUpload ? <Upload setShowUpload={setShowUpload} /> : null}
+        {showUpload ?  null :<Upload setShowUpload={setShowUpload} />}
+
+        <Files/>
       </div>
     </>
   );
