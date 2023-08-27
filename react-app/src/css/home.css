@@ -63,8 +63,9 @@ ol {
   background-color: #5c5c5c;
 }
 #HEADER{
+  display: inline-block;
   width: 100vw;
-  height: 10vh;
+  height: 10em;
   margin: 0;
 }
 #HEADER p{margin: 0;}
@@ -83,4 +84,5 @@ ol {
   border: 2px solid red;
   margin: 5px;
   flex-direction: column;
+  font-size: 1cqw;
 }

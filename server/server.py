@@ -2,8 +2,10 @@
 # run server:       flask --app server.py run
 # debug server:       flask --app server.py --debug run
 import os
+import io
+import zipfile
 from flask import Flask
-from flask import request
+from flask import request,send_file,send_from_directory
 from flask_cors import CORS, cross_origin
 from db import *
 import json
@@ -93,7 +95,7 @@ def Logout():
 
     return ("ok",200)
 
-@app.route("/api/upload", methods=["POST","GET","OPTIONS"])
+@app.route("/api/upload", methods=["POST","OPTIONS"])
 @cross_origin()
 def Upload():
     if request.method == "POST":
@@ -114,6 +116,7 @@ def Upload():
                 return ("succesfull",200)
             return ("no auth",200)
         return ("no auth",200)
+    
 
 @app.route("/api/files", methods=["POST"])
 @cross_origin()
@@ -123,17 +126,49 @@ def Files():
             token = request.headers.get("Authorization")
             checkToken = CheckToken(token)
             if checkToken is not None:
-                id = str(checkToken["id"])
-                if  os.path.exists(os.path.join(app.config["UPLOAD_FOLDER"],id)):
-                    fileNames = os.listdir(os.path.join(app.config["UPLOAD_FOLDER"],id))
-                    fileSizes = []
-                    with os.scandir(os.path.join(app.config["UPLOAD_FOLDER"],id)) as entries:
-                        for entry in entries:
-                            fileSizes.append(entry.stat().st_size)
-                    response = {}
-                    response["names"] = fileNames
-                    response["sizes"] = fileSizes
-                    
-                    return(response,200)
-        return ("",200)
+                try:
+                    id = str(checkToken["id"])
+                    action = request.json["Action"]
+                except:
+                    return ("No action defined",200)
+                
+                if action == "GetFiles":
+                    if  os.path.exists(os.path.join(app.config["UPLOAD_FOLDER"],id)):
+                        fileNames = os.listdir(os.path.join(app.config["UPLOAD_FOLDER"],id))
+                        fileSizes = []
+                        with os.scandir(os.path.join(app.config["UPLOAD_FOLDER"],id)) as entries:
+                            for entry in entries:
+                                fileSizes.append(entry.stat().st_size)
+                        response = {}
+                        response["names"] = fileNames
+                        response["sizes"] = fileSizes
+                        return(response,200)
+                if action == "DownloadFiles":
+                    fileNames = request.json["FileNames"]
+                    if len(fileNames) == 1:
+                        return send_file(
+                            os.path.join(app.config["UPLOAD_FOLDER"],id,fileNames[0]),
+                            as_attachment=True,
+                            download_name=fileNames[0]
+                            )
+                    else:
+                        filedata = {}
+                        
+                        #for name in fileNames:
+                            #with open(os.path.join(app.config["UPLOAD_FOLDER"],id,name), "rb") as file:
+                            #    filedata[name] = file.read()
+                        zipbuffer = io.BytesIO()
+                        with zipfile.ZipFile(zipbuffer, "w") as zipf:
+                            for name in fileNames:
+                                zipf.write(os.path.join(app.config["UPLOAD_FOLDER"],id,name))
 
+                        zipbuffer.seek(0)
+
+                        return send_file(
+                            os.path.join(app.config["UPLOAD_FOLDER"],id,fileNames[0]),
+                            as_attachment=True,
+                            download_name="files.zip",
+                            mimetype="application/zip"
+                            )
+                        
+        return ("no auth header",200)

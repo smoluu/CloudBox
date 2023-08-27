@@ -5,7 +5,11 @@ const Files = () => {
   const [homefilesElement, setHomeFilesElement] = useState([]);
   const token = localStorage.getItem("token");
   const fetchFiles = async () => {
-    return Axios.post("http://localhost:5000/api/files", null, {
+    return Axios.post("http://localhost:5000/api/files", 
+    {
+      Action: "GetFiles"
+    },
+    {
       headers: { "Content-Type": "application/json", Authorization: token },
     })
       .then((response) => {
@@ -15,10 +19,10 @@ const Files = () => {
         alert(error.message);
       });
   };
+
   useEffect(() => {
     fetchFiles().then((res) => {
-
-      if (res) {
+      if (res.names) {
         var result = [];
         var names = Array.from(res.names);
         var sizes = Array.from(res.sizes);
@@ -27,7 +31,7 @@ const Files = () => {
             <div key={i} id={"fileDiv" + i} className="FILEDIV">
               <input type="checkbox" id="checkbox">
               </input>
-              <h3>{names[i]}</h3>
+              <h3 id={"fileName"+ i}>{names[i]}</h3>
               <p>{bytesToSize(sizes[i])}</p>
             </div>
           );
@@ -36,7 +40,11 @@ const Files = () => {
       setHomeFilesElement(result);
     });
   }, []);
-  return <div id="FILES">{homefilesElement}</div>;
+  return (
+    <div id="FILES">
+    {homefilesElement}
+    </div>
+  );
 };
 
 function bytesToSize(bytes) {

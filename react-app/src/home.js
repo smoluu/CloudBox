@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./css/home.css";
-import { handleLogout, CheckAuth } from "./requests";
+import { handleLogout,DownloadFiles } from "./requests";
 import { useNavigate } from "react-router-dom";
 import Upload from "./upload";
 import Files from "./files";
@@ -36,7 +36,7 @@ const Home = () => {
         </button>
         <button
           onClick={() => {
-            
+            DownloadFiles(SelectedFileNames());
           }}
         >
           Download Selected
@@ -54,6 +54,16 @@ const Home = () => {
     for (var i = 0; i < inputs.length; i++) {
       inputs[i].checked = !allSelected;
     }
+  }
+  function SelectedFileNames(){
+    var checkboxes = document.querySelectorAll('input[type=checkbox]:checked')
+    var fileNames = []
+    for (var i = 0;i < checkboxes.length; i++){
+      var parentID = checkboxes[i].parentElement.id
+      var nameID = parentID.replace("fileDiv", "fileName")
+      fileNames.push(document.getElementById(nameID).textContent)
+    }
+    return fileNames
   }
 };
 export default Home;
