@@ -62,3 +62,25 @@ ol {
   border: 1px solid #000000;
   background-color: #5c5c5c;
 }
+#HEADER{
+  width: 100vw;
+  height: 10vh;
+  margin: 0;
+}
+#HEADER p{margin: 0;}
+#HEADER button{
+  padding: 5px;
+  margin: 10px;
+}
+#FILES {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.FILEDIV{
+  width: 20vw;
+  height: 20vh;
+  border: 2px solid red;
+  margin: 5px;
+  flex-direction: column;
+}

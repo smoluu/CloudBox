@@ -30,9 +30,6 @@ const handleLogout = (username, token) => {
     for (var i = 0; i < fileArray.length; i++) {
       formData.append("file", fileArray[i], fileArray[i].name);
     }
-    
-    console.log("formData BEFORE SENDING", formData);
-
     Axios.post(url, formData,
       {
       headers: {
@@ -73,25 +70,6 @@ const handleLogout = (username, token) => {
       });
   };
 
-const RequestFiles = async  () => {
-  const token = localStorage.getItem("token");
-  await Axios.post(
-    "http://localhost:5000/api/files",null,
-    {
-      headers: { "Content-Type": "application/json",
-      Authorization: token
-      }
-    }
-  )
-    .then((response) => {
-      console.log(response.data)
-      return response.data
-    })
-    .catch(function (error) {
-      alert(error.message);
-    });
-};
 
 
-
-export { handleLogout, handleUpload, CheckAuth, RequestFiles};
+export { handleLogout, handleUpload, CheckAuth};
