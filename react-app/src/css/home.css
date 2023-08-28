@@ -63,6 +63,7 @@ ol {
   background-color: #5c5c5c;
 }
 #HEADER{
+  font-size: 2cqw;
   display: inline-block;
   width: 100vw;
   height: 10em;
@@ -70,6 +71,7 @@ ol {
 }
 #HEADER p{margin: 0;}
 #HEADER button{
+  font-size: 1cqw;
   padding: 5px;
   margin: 10px;
 }
@@ -79,10 +81,10 @@ ol {
   justify-content: center;
 }
 .FILEDIV{
-  width: 20vw;
+  width: 15  vw;
   height: 20vh;
-  border: 2px solid red;
-  margin: 5px;
+  margin: 30px;
   flex-direction: column;
   font-size: 1cqw;
+  box-shadow: 0 0 0 2px rgb(169, 28, 182), 15px 15px 5px 0 rgb(59, 9, 56);
 }

@@ -5,7 +5,7 @@ import os
 import io
 import zipfile
 from flask import Flask
-from flask import request,send_file,send_from_directory
+from flask import request,send_file,make_response
 from flask_cors import CORS, cross_origin
 from db import *
 import json
@@ -145,30 +145,36 @@ def Files():
                         return(response,200)
                 if action == "DownloadFiles":
                     fileNames = request.json["FileNames"]
-                    if len(fileNames) == 1:
-                        return send_file(
+
+                    if len(fileNames) == 1: #for single file
+                        response = make_response(
+                            send_file(
                             os.path.join(app.config["UPLOAD_FOLDER"],id,fileNames[0]),
                             as_attachment=True,
                             download_name=fileNames[0]
-                            )
-                    else:
-                        filedata = {}
-                        
-                        #for name in fileNames:
-                            #with open(os.path.join(app.config["UPLOAD_FOLDER"],id,name), "rb") as file:
-                            #    filedata[name] = file.read()
+                            ))
+                        response.headers["X-FileName"] = fileNames[0]
+                        response.headers["Access-Control-Expose-Headers"] = "X-FileName" 
+                        return response
+                    
+                    elif len(fileNames) > 1: #for multiple files
                         zipbuffer = io.BytesIO()
                         with zipfile.ZipFile(zipbuffer, "w") as zipf:
                             for name in fileNames:
-                                zipf.write(os.path.join(app.config["UPLOAD_FOLDER"],id,name))
+                                zipf.write(os.path.join(app.config["UPLOAD_FOLDER"],id,name),name)
 
                         zipbuffer.seek(0)
-
-                        return send_file(
-                            os.path.join(app.config["UPLOAD_FOLDER"],id,fileNames[0]),
+                        response = make_response(
+                            send_file(
+                            zipbuffer,
                             as_attachment=True,
                             download_name="files.zip",
                             mimetype="application/zip"
-                            )
-                        
+                            ))
+                        response.headers["X-FileName"] = str(len(fileNames)) + " Files"
+                        #allow client to see this header
+                        response.headers["Access-Control-Expose-Headers"] = "X-FileName" 
+                        return response
+                    return("no files",200)
+                return("no action",200)
         return ("no auth header",200)

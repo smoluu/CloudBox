@@ -87,7 +87,10 @@ const DownloadFiles = async (fileNames) => {
       const url = URL.createObjectURL(blob)
       const a = document.createElement("a")
       a.href = url
-      a.download = "files.jpg"
+      var fileName = response.headers["x-filename"]
+      console.log(response.headers)
+      a.download = fileName
+
       document.body.append(a)
       a.click()
       URL.revokeObjectURL(url)
