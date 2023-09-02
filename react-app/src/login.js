@@ -49,35 +49,27 @@ const Login = ({ loginStatus, setLoginStatus }) => {
       });
   };
 
-  async function handleRegister () {
-    if (password.length <= 5) {
-      alert("password too short");
-      return;
-    }
-    return await
-    Axios.post(
+  const handleRegister = async () => {
+    return await Axios.post(
       "http://localhost:5000/api/register",
       {
         username: username,
         password: password,
       },
       {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     )
       .then((response) => {
-        if (response.data.error) {
-          alert(response.data.error);
-        }
-        if (response.data) {
-          alert(response.data.message);
-        }
+        alert(response.data.message);
       })
       .catch(function (error) {
-        alert(error.message);
+        console.log(error.message);
+        alert(error.message)
       });
-    }
-
+  };
 
   return (
     <>

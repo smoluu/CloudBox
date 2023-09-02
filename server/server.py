@@ -4,6 +4,7 @@
 import os
 import io
 import zipfile
+import hashlib
 from flask import Flask
 from flask import request,send_file,make_response
 from flask_cors import CORS, cross_origin
@@ -38,10 +39,10 @@ def Login():
             return {"error": "database offline - 500"}
 
         username = request.json["username"]
-        password = request.json["password"]
+        password = request.json["password"].encode('utf-8')
+        password = hashlib.sha256(password).hexdigest()
         # result is a dictionary
         result = CheckForCredentials(username,password)
-        print(result)
         response = {
             "username": username,
             "auth": False,
@@ -56,19 +57,21 @@ def Login():
     else:
         return ("",400)
     
-@app.route("/api/register", methods=["POST"])
+@app.route("/api/register", methods=["POST","OPTIONS"])
+@cross_origin()
 def Register():
     if DatabaseStatus() == False:
         return {"error": "database offline - 500"}
     if request:
+        print(request.get_data())
         username = request.json["username"]
-        password = request.json["password"]
+        password = request.json["password"].encode('utf-8')
+        password = hashlib.sha256(password).hexdigest()
         response = {
             "username": username,
             "succesful": "",
             "message": ""
         }
-
         if isUsernameFree(username):
             RegisterUser(username,password)
             response["succesful"] = True
@@ -79,6 +82,7 @@ def Register():
         return response
 
 @app.route("/api/logout", methods=["POST"])
+@cross_origin()
 def Logout():
     if request.data:
         username = request.json["username"]

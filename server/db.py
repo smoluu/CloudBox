@@ -20,7 +20,7 @@ def DatabaseStatus(): # returns true if database is online
 
 def CheckForCredentials(username,password):
     con = mysql.connector.connect(**config)
-    print("Searching credentials:",username,password)
+    print("Checking credentials:",username,password)
 
     cursor = con.cursor(dictionary=True)
     query = "SELECT * FROM users WHERE username = %s AND password = %s"
@@ -39,7 +39,7 @@ def GenerateToken(id):
     query = "UPDATE users SET token = %s WHERE id = %s"
     cursor.execute(query,(token,id))
     con.close()
-    print("Generated token for ID:",id)
+    print("Generated token for user ID:",id)
     return token
 
 def CheckToken(token):
@@ -51,6 +51,16 @@ def CheckToken(token):
     con.close()
     print("Checked token",token)
     return result
+
+def RevokeToken(username,token):
+    con = mysql.connector.connect(**config)
+    cursor = con.cursor()
+    query = "UPDATE users SET token = %s WHERE token = %s AND username = %s"
+    cursor.execute(query,("",token,username))
+    con.commit()
+    con.close()
+    print("removed token for user:",username)
+    return True
 
 
 def isUsernameFree(username):
@@ -72,14 +82,4 @@ def RegisterUser(username,password):
     con.commit()
     con.close()
     print("Registered user:",username)
-
-def RevokeToken(username,token):
-    con = mysql.connector.connect(**config)
-    cursor = con.cursor()
-    query = "UPDATE users SET token = %s WHERE token = %s AND username = %s"
-    cursor.execute(query,("",token,username))
-    con.commit()
-    con.close()
-    print("removed token for user:",username)
-    return True
 

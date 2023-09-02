@@ -24,7 +24,6 @@ const handleLogout = (username, token) => {
 }
 
 const handleUpload = (url,fileArray) => {
-  const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
   const FormData = require("form-data");
   var formData = new FormData();
