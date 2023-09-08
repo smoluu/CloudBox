@@ -1,9 +1,11 @@
 import Axios from "axios";
 import React, { useState, useEffect } from "react";
 
-const Files = () => {
+
+const Files = (filesUpdate) => {
   const [homefilesElement, setHomeFilesElement] = useState([]);
   const token = localStorage.getItem("token");
+
   const fetchFiles = async () => {
     return Axios.post("http://localhost:5000/api/files", 
     {
@@ -41,7 +43,7 @@ const Files = () => {
     });
   }, []);
   return (
-    <div id="FILES">
+    <div id="FILES" key={filesUpdate}>
     {homefilesElement}
     </div>
   );

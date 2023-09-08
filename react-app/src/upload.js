@@ -4,13 +4,13 @@ import {handleUpload,CheckAuth } from "./requests";
 var fileArray = [];
 var results = [];
 
-const Upload = ({ setShowUpload }) => {
+const Upload = ({ setShowUpload,handleFilesUpdate }) => {
   const [filesElement, setFilesElement] = useState([]);
 
   const onFileChange = (e) => {
-    if (e.target.files){
+    if (e.target.files) {
       fileArray = [];
-      fileArray = Array.from(e.target.files)
+      fileArray = Array.from(e.target.files);
       for (var i = 0; i < fileArray.length; i++) {
         results.push(
           <li key={i} id={"li" + i}>
@@ -25,23 +25,19 @@ const Upload = ({ setShowUpload }) => {
             </button>
           </li>
         );
-      };
-      setFilesElement(
-        <div>
-        {results}
-      </div>);
+      }
+      setFilesElement(<div>{results}</div>);
     }
   };
 
-  useEffect(() => {
-  });
+  useEffect(() => {});
 
   const removeFile = (id) => {
-    const index = id.replace("li","")
-    fileArray.splice(index,1);
-    results.splice(index,1);
+    const index = id.replace("li", "");
+    fileArray.splice(index, 1);
+    results.splice(index, 1);
     setFilesElement(<div>{results}</div>);
-  }
+  };
 
   function bytesToSize(bytes) {
     var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -51,15 +47,16 @@ const Upload = ({ setShowUpload }) => {
     return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
   }
 
-  const handleUploadButton = () =>{
-    if(fileArray.length > 0){
-      if(CheckAuth()){
+  const handleUploadButton = () => {
+    if (fileArray.length > 0) {
+      if (CheckAuth()) {
         handleUpload("http://localhost:5000/api/upload", fileArray);
         setFilesElement(<div>succesfully uploaded</div>);
+        handleFilesUpdate();
         fileArray = [];
       }
     }
-  }
+  };
   return (
     <>
       <div className="upload-component">
@@ -70,11 +67,11 @@ const Upload = ({ setShowUpload }) => {
             id="fileInputButton"
             type="file"
             onChange={onFileChange}
-            onClick={ () => {
+            onClick={() => {
               results = [];
               fileArray = [];
               setFilesElement(<div></div>);
-              }} // empty file array
+            }} // empty file array
             multiple={true}
             style={{ display: "none" }}
           ></input>

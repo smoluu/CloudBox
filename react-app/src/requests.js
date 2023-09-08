@@ -23,14 +23,14 @@ const handleLogout = (username, token) => {
     });
 }
 
-const handleUpload = (url,fileArray) => {
+const handleUpload = async (url,fileArray) => {
   const token = localStorage.getItem("token");
   const FormData = require("form-data");
   var formData = new FormData();
   for (var i = 0; i < fileArray.length; i++) {
     formData.append("file", fileArray[i], fileArray[i].name);
   }
-  Axios.post(url, formData,
+  await Axios.post(url, formData,
     {
     headers: {
       Authorization: token

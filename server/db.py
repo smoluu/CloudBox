@@ -30,6 +30,7 @@ def CheckDatabaseTables():
             print("Created Table: ""users")
         else:
             print("All required tables found")
+        con.close()
 
 
 
@@ -64,7 +65,7 @@ def GenerateToken(id):
     cursor = con.cursor()
     query = "UPDATE users SET token = %s WHERE id = %s"
     cursor.execute(query,(token,id))
-    print(cursor.fetchall())
+    #print(cursor.fetchall())
     con.close()
     print("Generated token for user ID:",id)
     return token

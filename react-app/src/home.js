@@ -10,6 +10,12 @@ const Home = () => {
   const [showUpload, setShowUpload] = useState(true);
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token");
+  const [filesUpdate, setFilesUpdate] = useState(0); //used to update files
+
+  const handleFilesUpdate = () => {
+    setFilesUpdate(Math.floor(Math.random() * 1000));
+  };
+
 
   if (token === null || username === null) {
     window.location.replace("/login");
@@ -41,10 +47,7 @@ const Home = () => {
         >
           Download Selected &#10225;
         </button>
-        <button onClick={() => {
-
-        }}>Delete Selected &#9851;
-        </button>
+        <button onClick={() => {}}>Delete Selected &#9851;</button>
         <button
           onClick={() => {
             setShowUpload(!showUpload);
@@ -52,10 +55,15 @@ const Home = () => {
         >
           Upload &#10224;
         </button>
-        {showUpload ? null : <Upload setShowUpload={setShowUpload} />}
+        {showUpload ? null : (
+          <Upload
+            setShowUpload={setShowUpload}
+            handleFilesUpdate={handleFilesUpdate}
+          />
+        )}
       </div>
 
-      <Files />
+      <Files key={filesUpdate} />
     </>
   );
   function SelectAll() {

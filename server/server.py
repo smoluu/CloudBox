@@ -120,7 +120,7 @@ def Upload():
                 for file in fileList:
                     fileName = secure_filename(file.filename)
                     file.save(os.path.join(app.config["UPLOAD_FOLDER"],id, fileName))
-                    print(os.path.join(app.config["UPLOAD_FOLDER"],id, fileName))
+                    print("UPLOAD:",os.path.join(app.config["UPLOAD_FOLDER"],id, fileName))
                 return ("succesfull",200)
             return ("no auth token",200)
         return ("no auth",200)
