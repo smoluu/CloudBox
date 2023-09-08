@@ -1,6 +1,6 @@
 import mysql.connector
 import secrets
-
+import datetime
 config = {
     "user": "root",
     "password": "",
@@ -8,6 +8,11 @@ config = {
     "port": "3306",
     "database": "cloudbox"
 }
+configToken = {
+    "tokenExpireTime":    "30", #in minutes
+}
+
+
 
 def DatabaseStatus(): # returns true if database is online
     try:
@@ -34,6 +39,8 @@ def CheckForCredentials(username,password):
     
 def GenerateToken(id):
     token = secrets.token_urlsafe()
+    tokenExpireDate = datetime.datetime.now() + datetime.timedelta(minutes=30)
+    print(str(tokenExpireDate))
     con = mysql.connector.connect(**config)
     cursor = con.cursor()
     query = "UPDATE users SET token = %s WHERE id = %s"
