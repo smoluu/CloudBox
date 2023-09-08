@@ -8,6 +8,25 @@ config = {
     "port": "3306",
     "database": "cloudbox"
 }
+tables = {
+    "users"
+}
+
+def CheckDatabaseTables(): # return true if all tables are found in database
+    if DatabaseStatus() == True:
+        con = mysql.connector.connect(**config)
+        cursor = con.cursor()
+        query = "SHOW TABLES"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        resultList = [item[0] for item in result]
+        tablesFound = all(item in resultList for item in tables)
+        if tablesFound == False: #if users table doesnt exist
+            query = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255), token VARCHAR(255))"
+            cursor.execute(query)
+            print("Created Table: ""users")
+        else:
+            print("All required tables found")
 
 def DatabaseStatus(): # returns true if database is online
     try:
@@ -38,6 +57,7 @@ def GenerateToken(id):
     cursor = con.cursor()
     query = "UPDATE users SET token = %s WHERE id = %s"
     cursor.execute(query,(token,id))
+    print(cursor.fetchall())
     con.close()
     print("Generated token for user ID:",id)
     return token

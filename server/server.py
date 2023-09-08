@@ -22,6 +22,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1000 * 1000 * 1000 # in gigabytes
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"]) #creates folder for uploads
+#check if all required tables exist in database
+CheckDatabaseTables()
 
 @app.route("/api/login", methods=["POST"])
 @cross_origin()
@@ -118,7 +120,7 @@ def Upload():
                     file.save(os.path.join(app.config["UPLOAD_FOLDER"],id, fileName))
                     print(os.path.join(app.config["UPLOAD_FOLDER"],id, fileName))
                 return ("succesfull",200)
-            return ("no auth",200)
+            return ("no auth token",200)
         return ("no auth",200)
     
 
