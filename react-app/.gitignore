@@ -23,6 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 #
-/uploads/
-.venv/
-__pycache__/
+/uploads
+server/.venv
+server/__pycache__
