@@ -47,10 +47,10 @@ const Upload = ({ setShowUpload,handleFilesUpdate }) => {
     return (bytes / Math.pow(1024, i)).toFixed(1) + " " + sizes[i];
   }
 
-  const handleUploadButton = () => {
+  const handleUploadButton = async () => {
     if (fileArray.length > 0) {
       if (CheckAuth()) {
-        handleUpload("http://localhost:5000/api/upload", fileArray);
+        await handleUpload("http://localhost:5000/api/upload", fileArray);
         setFilesElement(<div>succesfully uploaded</div>);
         handleFilesUpdate();
         fileArray = [];
