@@ -1,41 +1,41 @@
 import mysql.connector
 import secrets
 import datetime
-config = {
+DBconfig = {
     "user": "root",
     "password": "",
     "host": "localhost",
     "port": "3306",
     "database": "cloudbox"
 }
+config = {
+    "tokenExpireTime":    "30", #in minutes
+}
 tables = {
     "users"
 }
-
-def CheckDatabaseTables(): # return true if all tables are found in database
+# creates required tables and columns in DB if not found
+def CheckDatabaseTables():
     if DatabaseStatus() == True:
-        con = mysql.connector.connect(**config)
+        con = mysql.connector.connect(**DBconfig)
         cursor = con.cursor()
         query = "SHOW TABLES"
         cursor.execute(query)
         result = cursor.fetchall()
         resultList = [item[0] for item in result]
         tablesFound = all(item in resultList for item in tables)
-        if tablesFound == False: #if users table doesnt exist
+        if tablesFound == False: #if required tables dont exist
             query = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255), token VARCHAR(255))"
             cursor.execute(query)
             print("Created Table: ""users")
         else:
             print("All required tables found")
-configToken = {
-    "tokenExpireTime":    "30", #in minutes
-}
 
 
 
 def DatabaseStatus(): # returns true if database is online
     try:
-        con = mysql.connector.connect(**config)
+        con = mysql.connector.connect(**DBconfig)
     except:
         return False
     con.close()
@@ -43,7 +43,7 @@ def DatabaseStatus(): # returns true if database is online
 
 
 def CheckForCredentials(username,password):
-    con = mysql.connector.connect(**config)
+    con = mysql.connector.connect(**DBconfig)
     print("Checking credentials:",username,password)
 
     cursor = con.cursor(dictionary=True)
@@ -60,7 +60,7 @@ def GenerateToken(id):
     token = secrets.token_urlsafe()
     tokenExpireDate = datetime.datetime.now() + datetime.timedelta(minutes=30)
     print(str(tokenExpireDate))
-    con = mysql.connector.connect(**config)
+    con = mysql.connector.connect(**DBconfig)
     cursor = con.cursor()
     query = "UPDATE users SET token = %s WHERE id = %s"
     cursor.execute(query,(token,id))
@@ -70,7 +70,7 @@ def GenerateToken(id):
     return token
 
 def CheckToken(token):
-    con = mysql.connector.connect(**config)
+    con = mysql.connector.connect(**DBconfig)
     cursor = con.cursor(dictionary=True)
     query = "SELECT * FROM users WHERE token = %s"
     cursor.execute(query,(token,))
@@ -80,7 +80,7 @@ def CheckToken(token):
     return result
 
 def RevokeToken(username,token):
-    con = mysql.connector.connect(**config)
+    con = mysql.connector.connect(**DBconfig)
     cursor = con.cursor()
     query = "UPDATE users SET token = %s WHERE token = %s AND username = %s"
     cursor.execute(query,("",token,username))
@@ -91,7 +91,7 @@ def RevokeToken(username,token):
 
 
 def isUsernameFree(username):
-    con = mysql.connector.connect(**config)
+    con = mysql.connector.connect(**DBconfig)
     cursor = con.cursor(dictionary=True)
     query = "SELECT * FROM users WHERE username = %s"
     cursor.execute(query,(username,))
@@ -102,7 +102,7 @@ def isUsernameFree(username):
     return True
 
 def RegisterUser(username,password):
-    con = mysql.connector.connect(**config)
+    con = mysql.connector.connect(**DBconfig)
     cursor = con.cursor(dictionary=True)
     query = "INSERT INTO users ( id , username, password ) VALUES ( NULL, %s, %s )"
     cursor.execute(query,(username,password))
