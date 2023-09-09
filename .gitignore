@@ -1,6 +1,5 @@
-server/__pycache__
-server/uploads
-server/env/
+api/__pycache__
+api/uploads/
 
 # dependencies
 react-app/node_modules

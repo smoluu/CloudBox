@@ -1,4 +1,4 @@
-# debug server: flask --app server.py --debug run
+# debug server: flask --app api.py --debug run
 
 import os
 import io
