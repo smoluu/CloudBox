@@ -1,0 +1,30 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: flask-api
+    ports:
+      - 5000:5000
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    image: react-flask-client
+    ports:
+      - "3000:80"
+  db:
+    image: mysql:8.1
+    restart: always
+    environment:
+      MYSQL_DATABASE: cloudbox
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - database:/var/lib/mysql
+volumes:
+  database:
+# docker compose up
