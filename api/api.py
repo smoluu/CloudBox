@@ -179,6 +179,3 @@ def Files():
                     return("no files",200)
                 return("no action",200)
         return ("no auth header",200)
-    
-if __name__ == '__main__':
-    app.run()
