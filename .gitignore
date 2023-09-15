@@ -1,5 +1,8 @@
+#api
 api/__pycache__
 api/uploads/
+api/test.py
+api/env
 
 # dependencies
 react-app/node_modules

@@ -1,6 +1,9 @@
 import mysql.connector
 import secrets
 import datetime
+import yaml
+# get config.yml
+
 DBconfig = {
     "user": "root",
     "password": "",
