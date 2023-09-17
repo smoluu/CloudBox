@@ -1,16 +1,21 @@
 import mysql.connector
 import secrets
 import datetime
-import yaml
+from dotenv import dotenv_values
+
 # get config.yml
 
+env_config = dotenv_values(".env")
 DBconfig = {
     "user": "root",
-    "password": "",
-    "host": "db",
+    "password": "password",
+    "host": "localhost",
     "port": "3306",
     "database": "cloudbox"
 }
+#DBconfig["user"] = env_config["MYSQL_USERNAME"]
+#DBconfig["password"] = env_config["MYSQL_USERNAME"]
+
 config = {
     "tokenExpireTime":    "30", #in minutes
 }
@@ -22,17 +27,15 @@ def CheckDatabaseTables():
     if DatabaseStatus() == True:
         con = mysql.connector.connect(**DBconfig)
         cursor = con.cursor()
-        query = "SHOW TABLES"
+        query = "SHOW TABLES LIKE 'users'"
         cursor.execute(query)
-        result = cursor.fetchall()
-        resultList = [item[0] for item in result]
-        tablesFound = all(item in resultList for item in tables)
-        if tablesFound == False: #if required tables dont exist
+        result = cursor.fetchone()
+        if result:
+            print(" * Required tables found!")
+        else:
             query = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255), token VARCHAR(255))"
             cursor.execute(query)
             print("Created Table: ""users")
-        else:
-            print("All required tables found")
         con.close()
 
 
@@ -40,7 +43,9 @@ def CheckDatabaseTables():
 def DatabaseStatus(): # returns true if database is online
     try:
         con = mysql.connector.connect(**DBconfig)
-    except:
+    except Exception as error:
+        print("Database offline")
+        print(error)
         return False
     con.close()
     return True

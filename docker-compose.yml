@@ -1,10 +1,29 @@
 services:
+  db:
+    image: mysql:8.1
+    restart: always
+    env_file:
+      - db.env
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: "--health-cmd='mysqladmin ping --silent'"
+      interval: 2s
+      timeout: 40s
+      retries: 20
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      - network
   api:
     build:
       context: .
       dockerfile: Dockerfile.api
     image: flask-api
     restart: always
+    depends_on:
+      db:
+      condition: service_healthy
     ports:
       - 5000:5000
     networks:
@@ -19,21 +38,10 @@ services:
       - "3000:80"
     networks:
       - network
-  db:
-    image: mysql:8.1
-    restart: always
-    environment:
-      MYSQL_DATABASE: network
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
-    ports:
-      - "3306:3306"
-    volumes:
-      - database:/var/lib/mysql
-    networks:
-      - network
 volumes:
   database:
 networks:
   network:
 
 # docker compose up
+# docker compose build

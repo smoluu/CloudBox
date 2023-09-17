@@ -30,30 +30,31 @@ const Home = () => {
             handleLogout(username, token);
             navigate("/login");
           }}
-        >
-          Logout &#10060;
+          >
+          Logout <span role="img" aria-label="X-symbol">&#10060;</span>
         </button>
         <button
           onClick={() => {
             SelectAll();
           }}
-        >
-          Select all &#9745;
+          >
+          Select all <span role="img" aria-label="X-symbol">&#9745;</span>
         </button>
         <button
           onClick={() => {
             DownloadFiles(SelectedFileNames());
           }}
         >
-          Download Selected &#10225;
+          Download Selected <span role="img" aria-label="X-symbol">&#10225;</span>
         </button>
-        <button onClick={() => {}}>Delete Selected &#9851;</button>
+        <button onClick={() => {}}>Delete Selected <span role="img" aria-label="X-symbol">&#9851;</span>
+        </button>
         <button
           onClick={() => {
             setShowUpload(!showUpload);
           }}
         >
-          Upload &#10224;
+          Upload <span role="img" aria-label="X-symbol">&#10224;</span>
         </button>
         {showUpload ? null : (
           <Upload
