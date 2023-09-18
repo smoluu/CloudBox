@@ -41,7 +41,7 @@ const Files = (filesUpdate) => {
       }
       setHomeFilesElement(result);
     });
-  }, []);
+  },[]);
   return (
     <div id="FILES" key={filesUpdate}>
     {homefilesElement}

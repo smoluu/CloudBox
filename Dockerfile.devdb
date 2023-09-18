@@ -1,0 +1,7 @@
+FROM mysql:8.1
+EXPOSE 3306
+
+#build
+#docker build -f Dockerfile.devdb -t dev-db .
+#run
+#docker run --rm -d -p 3306:3306 --name dev-db --env-file=db.env dev-db
