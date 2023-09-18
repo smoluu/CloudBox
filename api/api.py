@@ -178,5 +178,20 @@ def Files():
                         response.headers["Access-Control-Expose-Headers"] = "X-FileName" 
                         return response
                     return("no files",200)
+                
+                if action == "RemoveFiles":
+                    RemoveFile(request,id)
+
                 return("no action",200)
         return ("no auth header",200)
+
+def RemoveFile(request,id):
+    fileNames = request.json["FileNames"]
+    for fileName in fileNames:
+        secureFileName = secure_filename(fileName)
+        if os.path.exists(os.path.join(app.config["UPLOAD_FOLDER"],id,secureFileName)):
+            os.remove(os.path.join(app.config["UPLOAD_FOLDER"],id,secureFileName))
+        else:
+            print("userid", id, "invalid file name when removing files!")
+        print("userid", id, "Succesfully removed",len(fileNames), "files.")
+    return

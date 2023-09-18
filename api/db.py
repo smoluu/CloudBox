@@ -38,8 +38,6 @@ def CheckDatabaseTables():
             print("Created Table: ""users")
         con.close()
 
-
-
 def DatabaseStatus(): # returns true if database is online
     try:
         con = mysql.connector.connect(**DBconfig)
