@@ -144,7 +144,9 @@ def Files():
                         response = {}
                         response["names"] = fileNames
                         response["sizes"] = fileSizes
+                        print(f"userid {id} fetched files for display")
                         return(response,200)
+                    
                 if action == "DownloadFiles":
                     fileNames = request.json["FileNames"]
 
@@ -156,7 +158,8 @@ def Files():
                             download_name=fileNames[0]
                             ))
                         response.headers["X-FileName"] = fileNames[0]
-                        response.headers["Access-Control-Expose-Headers"] = "X-FileName" 
+                        response.headers["Access-Control-Expose-Headers"] = "X-FileName"
+                        print(f"userid {id} downloaded {len(fileNames)} files")
                         return response
                     
                     elif len(fileNames) > 1: #for multiple files
@@ -176,22 +179,24 @@ def Files():
                         response.headers["X-FileName"] = str(len(fileNames)) + " Files"
                         #allow client to see this header
                         response.headers["Access-Control-Expose-Headers"] = "X-FileName" 
+                        print(f"userid {id} downloaded {len(fileNames)} files")
                         return response
                     return("no files",200)
                 
                 if action == "RemoveFiles":
-                    RemoveFile(request,id)
+                    RemoveFiles(request,id)
+                    return("files removed",200)
 
                 return("no action",200)
         return ("no auth header",200)
 
-def RemoveFile(request,id):
+def RemoveFiles(request,id):
     fileNames = request.json["FileNames"]
     for fileName in fileNames:
         secureFileName = secure_filename(fileName)
         if os.path.exists(os.path.join(app.config["UPLOAD_FOLDER"],id,secureFileName)):
             os.remove(os.path.join(app.config["UPLOAD_FOLDER"],id,secureFileName))
         else:
-            print("userid", id, "invalid file name when removing files!")
-        print("userid", id, "Succesfully removed",len(fileNames), "files.")
+            print(f"userid {id} invalid file name when removing files!")    
+        print(f"userid {id} Succesfully removed {len(fileNames)} files.")
     return
