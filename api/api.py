@@ -10,10 +10,19 @@ from flask_cors import CORS, cross_origin
 from db import *
 from werkzeug.utils import secure_filename
 app = Flask(__name__)
-app.debug = True
 cors = CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "http//:localhost:3000", "allow_headers": "*", "expose_headers": "*"}})
 UPLOAD_FOLDER = 'uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+print(f" * FLASK_ENV = {os.environ['FLASK_ENV']}")
+#load config
+if os.environ["FLASK_ENV"] == "development":
+    env_config = dotenv_values("../dev.env")
+    print(" * LOADED DEVELOPMENT CONFIG")
+else:
+    env_config = dotenv_values(".env")
+    print(" * LOADED PRODUCTION CONFIG")
+
+app.config['UPLOAD_FOLDER'] = env_config['FLASK_UPLOAD_FOLDER']
+print(f" * File Storage = {app.config['UPLOAD_FOLDER']}")
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1000 * 1000 * 1000 # in gigabytes
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"]) #creates folder for uploads
@@ -144,7 +153,7 @@ def Files():
                         response = {}
                         response["names"] = fileNames
                         response["sizes"] = fileSizes
-                        print(f"userid {id} fetched files for display")
+                        print(f" * userid {id} fetched files for display")
                         return(response,200)
                     
                 if action == "DownloadFiles":
@@ -159,7 +168,7 @@ def Files():
                             ))
                         response.headers["X-FileName"] = fileNames[0]
                         response.headers["Access-Control-Expose-Headers"] = "X-FileName"
-                        print(f"userid {id} downloaded {len(fileNames)} files")
+                        print(f" * userid {id} downloaded {len(fileNames)} files")
                         return response
                     
                     elif len(fileNames) > 1: #for multiple files
@@ -179,7 +188,7 @@ def Files():
                         response.headers["X-FileName"] = str(len(fileNames)) + " Files"
                         #allow client to see this header
                         response.headers["Access-Control-Expose-Headers"] = "X-FileName" 
-                        print(f"userid {id} downloaded {len(fileNames)} files")
+                        print(f" * userid {id} downloaded {len(fileNames)} files")
                         return response
                     return("no files",200)
                 
@@ -197,6 +206,6 @@ def RemoveFiles(request,id):
         if os.path.exists(os.path.join(app.config["UPLOAD_FOLDER"],id,secureFileName)):
             os.remove(os.path.join(app.config["UPLOAD_FOLDER"],id,secureFileName))
         else:
-            print(f"userid {id} invalid file name when removing files!")    
-        print(f"userid {id} Succesfully removed {len(fileNames)} files.")
+            print(f" *** userid {id} invalid file name when removing files!")    
+        print(f" * userid {id} Succesfully removed {len(fileNames)} files.")
     return

@@ -3,14 +3,14 @@ services:
     image: mysql:8.1
     restart: always
     env_file:
-      - db.env
+      - deployment/.env
     ports:
       - "3306:3306"
     healthcheck:
-      test: "--health-cmd='mysqladmin ping --silent'"
-      interval: 2s
-      timeout: 40s
-      retries: 20
+      test: "/usr/bin/mysql --user=root --password=${MYSQL_ROOT_PASSWORD} --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 30s
+      retries: 6
     volumes:
       - database:/var/lib/mysql
     networks:
@@ -23,9 +23,11 @@ services:
     restart: always
     depends_on:
       db:
-      condition: service_healthy
+        condition: service_healthy
     ports:
       - 5000:5000
+    volumes:
+      - filestorage:/var/lib/filestorage
     networks:
       - network
   client:
@@ -34,12 +36,16 @@ services:
       dockerfile: Dockerfile.client
     image: react-flask-client
     restart: always
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
       - "3000:80"
     networks:
       - network
 volumes:
   database:
+  filestorage:
 networks:
   network:
 

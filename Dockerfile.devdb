@@ -1,7 +1,9 @@
 FROM mysql:8.1
 EXPOSE 3306
-
+ENV MYSQL_ROOT_PASSWORD=password
+ENV MYSQL_DATABASE=cloudbox
+ENV MYSQL_ROOT_HOST=%
 #build
 #docker build -f Dockerfile.devdb -t dev-db .
 #run
-#docker run --rm -d -p 3306:3306 --name dev-db --env-file=db.env dev-db
+#docker run --rm -d -p 3306:3306 --name dev-db --env-file=dev.env dev-db

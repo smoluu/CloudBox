@@ -1,17 +1,22 @@
+import os
 import mysql.connector
 import secrets
 import datetime
 from dotenv import dotenv_values
 
 # get config.yml
-
-env_config = dotenv_values(".env")
+if os.environ["FLASK_ENV"] == "development":
+    env_config = dotenv_values("../dev.env")
+    print(" * LOADED DEVELOPMENT CONFIG")
+else:
+    env_config = dotenv_values(".env")
+    print(" * LOADED PRODUCTION CONFIG")
 DBconfig = {
-    "user": "root",
-    "password": "password",
-    "host": "localhost",
-    "port": "3306",
-    "database": "cloudbox"
+    "user": env_config['FLASK_DB_USER'],
+    "password": env_config['FLASK_DB_PASSWORD'],
+    "host": env_config['FLASK_DB_HOST'],
+    "port": env_config['FLASK_DB_PORT'],
+    "database": env_config['FLASK_DB_DATABASE']
 }
 #DBconfig["user"] = env_config["MYSQL_USERNAME"]
 #DBconfig["password"] = env_config["MYSQL_USERNAME"]
@@ -35,7 +40,7 @@ def CheckDatabaseTables():
         else:
             query = "CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255), token VARCHAR(255))"
             cursor.execute(query)
-            print("Created Table: ""users")
+            print(" * Created Table: ""users")
         con.close()
 
 def DatabaseStatus(): # returns true if database is online
