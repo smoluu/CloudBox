@@ -4,6 +4,8 @@ cd "$(dirname "$0")"
 cd "react-app"
 npm install
 
+docker build -f Dockerfile.devdb -t dev-db .
+
 cd ..
 cd api
 python3 -m venv env

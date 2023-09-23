@@ -4,7 +4,7 @@ echo "Starting development..."
 cd "$(dirname "$0")" #set directory to project root
 
 gnome-terminal --tab -t "docker-mysql-container" -- bash -c \
-  "docker run -p 3306:3306 -v mysql:/var/lib/mysql --rm --name dev-db --health-cmd='mysqladmin ping --silent' --env-file db.env dev-db;"
+  "docker run -p 3306:3306 -v mysql:/var/lib/mysql --health-cmd='mysqladmin ping --silent' --rm --name dev-db dev-db;"
 
 echo "Waiting for mysql container to launch on 3306..."
 sleep 1
@@ -31,6 +31,9 @@ echo "Waiting for Flask-api to start."
 gnome-terminal --tab -t "flask-api" -- bash -c \
   "cd api/; \
   source env/bin/activate; \
-  flask --app api.py --debug run; \
+  export FLASK_APP=api; \
+  export FLASK_ENV=development; \
+  export FLASK_DEBUG=1
+  flask run; \
   exec bash"
 echo "Flask-api started."

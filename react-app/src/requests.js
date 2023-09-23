@@ -99,4 +99,24 @@ const DownloadFiles = async (fileNames) => {
       alert(error.message);
     });
 };
-export { handleLogout, handleUpload, CheckAuth, DownloadFiles};
+const RemoveFiles = async (fileNames) => {
+  const token = localStorage.getItem("token");
+  return Axios.post(
+    "http://localhost:5000/api/files",
+    {
+      Action: "RemoveFiles",
+      FileNames:  fileNames
+    },
+    {
+      headers: { "Content-Type": "application/json", Authorization: token },
+    }
+  )
+    .then(response => {
+      
+    })
+    
+    .catch(function (error) {
+      alert(error.message);
+    });
+};
+export { handleLogout, handleUpload, CheckAuth, DownloadFiles, RemoveFiles};

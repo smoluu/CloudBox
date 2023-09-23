@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./css/home.css";
-import { handleLogout, DownloadFiles } from "./requests";
+import { handleLogout, DownloadFiles, RemoveFiles } from "./requests";
 import { useNavigate } from "react-router-dom";
 import Upload from "./upload";
 import Files from "./files";
@@ -25,37 +25,36 @@ const Home = () => {
     <>
       <div id="HEADER">
         <h1>welcome home {username}</h1>
+
         <button
           onClick={() => {
             handleLogout(username, token);
             navigate("/login");
-          }}
-          >
-          Logout <span role="img" aria-label="X-symbol">&#10060;</span>
+          }}>Logout <span role="img" aria-label="X-symbol">&#10060;</span>
         </button>
+
         <button
           onClick={() => {
             SelectAll();
-          }}
-          >
-          Select all <span role="img" aria-label="X-symbol">&#9745;</span>
+          }}>Select all <span role="img" aria-label="X-symbol">&#9745;</span>
         </button>
+
         <button
           onClick={() => {
             DownloadFiles(SelectedFileNames());
-          }}
-        >
-          Download Selected <span role="img" aria-label="X-symbol">&#10225;</span>
+          }}>Download Selected <span role="img" aria-label="X-symbol">&#10225;</span>
         </button>
-        <button onClick={() => {}}>Delete Selected <span role="img" aria-label="X-symbol">&#9851;</span>
+
+        <button onClick={() => {
+            DeleteFiles();
+            }}>Delete Selected <span role="img" aria-label="X-symbol">&#9851;</span>
         </button>
-        <button
-          onClick={() => {
+
+        <button onClick={() => {
             setShowUpload(!showUpload);
-          }}
-        >
-          Upload <span role="img" aria-label="X-symbol">&#10224;</span>
+          }}>Upload <span role="img" aria-label="X-symbol">&#10224;</span>
         </button>
+
         {showUpload ? null : (
           <Upload
             setShowUpload={setShowUpload}
@@ -68,11 +67,11 @@ const Home = () => {
     </>
   );
   function SelectAll() {
-    allSelected = !allSelected;
     var inputs = document.querySelectorAll("input[type='checkbox']");
     for (var i = 0; i < inputs.length; i++) {
       inputs[i].checked = !allSelected;
     }
+    allSelected = !allSelected;
   }
   function SelectedFileNames() {
     var checkboxes = document.querySelectorAll("input[type=checkbox]:checked");
@@ -83,6 +82,12 @@ const Home = () => {
       fileNames.push(document.getElementById(nameID).textContent);
     }
     return fileNames;
+  }
+  function DeleteFiles() {
+    if (window.confirm("Selected files will be permanently DELETED, are you sure?")){
+      RemoveFiles(SelectedFileNames());
+      handleFilesUpdate();
+    }
   }
 };
 export default Home;

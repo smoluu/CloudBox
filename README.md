@@ -7,5 +7,9 @@
     docker compose up
 
 ### depencies:
-  -node 16.20.2 \
-  -python 3.10
+    -node 16.20.2 \
+    -python 3.10
+
+### deployment:
+    docker compose build
+    docker compose --env-file ./deployment/.env up
